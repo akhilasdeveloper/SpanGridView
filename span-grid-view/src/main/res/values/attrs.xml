@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SpanGridView">
+        <attr name="brushSize" format="integer" />
+        <attr name="scale" format="float" />
+        <attr name="lineWidth" format="float"/>
+        <attr name="enableScale" format="boolean"/>
+        <attr name="enableSpan" format="boolean"/>
+        <attr name="enableLine" format="boolean"/>
+        <attr name="lineColor" format="color"/>
+        <attr name="gridColor" format="color"/>
+    </declare-styleable>
+</resources>
