@@ -60,11 +60,13 @@ class SpanGridView(
     var minScale = 20f
         set(value) {
             field = value
-            resolution = value
-            setResolutionToScale(value)
+            setScaleToResolution(scale)
         }
     var maxScale = 150f
-
+        set(value) {
+            field = value
+            setScaleToResolution(scale)
+        }
     private var touchCount = 0
     private var fact = 0f
 
@@ -121,13 +123,12 @@ class SpanGridView(
             this.setGridSize()
         }
 
-    var scale: Float = 0f
+    var scale: Float = .5f
         set(value) {
             val data = value.coerceIn(0f, 1f)
             field = data
             setScaleToResolution(data)
         }
-        get() = resolution / (maxScale - maxScale)
 
 
     var lineWidth: Float = 1f
