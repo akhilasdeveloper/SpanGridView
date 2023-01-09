@@ -3,7 +3,9 @@
     <declare-styleable name="SpanGridView">
         <attr name="brushSize" format="integer" />
         <attr name="scale" format="float" />
-        <attr name="lineWidth" format="float"/>
+        <attr name="lineWidth" format="dimension"/>
+        <attr name="minScale" format="dimension"/>
+        <attr name="maxScale" format="dimension"/>
         <attr name="enableScale" format="boolean"/>
         <attr name="enableSpan" format="boolean"/>
         <attr name="enableLine" format="boolean"/>

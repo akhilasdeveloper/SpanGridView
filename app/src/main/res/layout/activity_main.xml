@@ -12,11 +12,13 @@
         android:id="@+id/gridViewHolder"
         app:gridColor="#1B4913"
         app:lineColor="#DFDFDF"
-        app:lineWidth="2"
-        app:scale=".5"
+        app:lineWidth=".2dp"
+        app:scale="1"
         app:brushSize="1"
         app:enableLine="true"
         app:enableScale="true"
-        app:enableSpan="true" />
+        app:enableSpan="true"
+        app:maxScale="100dp"
+        app:minScale="5dp"/>
 
 </LinearLayout>

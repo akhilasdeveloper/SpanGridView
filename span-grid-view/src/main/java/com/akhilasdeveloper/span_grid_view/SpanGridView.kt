@@ -1,6 +1,7 @@
 package com.akhilasdeveloper.span_grid_view
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
@@ -55,8 +56,8 @@ class SpanGridView(
     //Fling friction
     private val flingFriction = 1.1f
 
-    private val scaleLimitStart = 20f
-    private val scaleLimitEnd = 150f
+    var minScale = 20f
+    var maxScale = 150f
 
     private var touchCount = 0
     private var fact = 0f
@@ -107,9 +108,9 @@ class SpanGridView(
             field = data
         }
 
-    private var resolution: Float = scaleLimitStart
+    private var resolution: Float = minScale
         set(value) {
-            val data = value.coerceIn(scaleLimitStart, scaleLimitEnd)
+            val data = value.coerceIn(minScale, maxScale)
             field = data
             this.setGridSize()
         }
@@ -120,7 +121,7 @@ class SpanGridView(
             field = data
             setScaleToResolution(data)
         }
-        get() = resolution / (scaleLimitEnd - scaleLimitEnd)
+        get() = resolution / (maxScale - maxScale)
 
 
     var lineWidth: Float = 1f
@@ -209,7 +210,9 @@ class SpanGridView(
                 ResourcesCompat.getColor(resources, R.color.grid_color, null)
             )
             scale = ta.getFloat(R.styleable.SpanGridView_scale, 1f)
-            lineWidth = ta.getFloat(R.styleable.SpanGridView_lineWidth, 1f)
+            lineWidth = ta.getDimension(R.styleable.SpanGridView_lineWidth, 1f).toPx()
+            minScale = ta.getDimension(R.styleable.SpanGridView_minScale, minScale).toPx()
+            maxScale = ta.getDimension(R.styleable.SpanGridView_maxScale, maxScale).toPx()
             scaleEnabled = ta.getBoolean(R.styleable.SpanGridView_enableScale, true)
             spanEnabled = ta.getBoolean(R.styleable.SpanGridView_enableSpan, true)
             lineEnabled = ta.getBoolean(R.styleable.SpanGridView_enableLine, true)
@@ -221,7 +224,7 @@ class SpanGridView(
     }
 
     private fun setScaleToResolution(scale: Float) {
-        resolution = (scaleLimitEnd - scaleLimitStart) * scale
+        resolution = (maxScale - minScale) * scale
     }
 
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
@@ -276,7 +279,7 @@ class SpanGridView(
             if (mode == MODE_VIEW && scaleEnabled) {
 
                 val scale = resolution * detector.scaleFactor
-                if (scale in scaleLimitStart..scaleLimitEnd) {
+                if (scale in minScale..maxScale) {
 
                     _textSize *= detector.scaleFactor
                     _lineWidth *= detector.scaleFactor
@@ -545,6 +548,10 @@ class SpanGridView(
         fun onDraw(px: Point)
         fun onModeChange(mode: Int)
     }
+
+    fun Float.toDp(): Float = (this / Resources.getSystem().displayMetrics.density)
+    fun Float.toPx(): Float = (this * Resources.getSystem().displayMetrics.density)
+
 }
 
 
