@@ -18,7 +18,7 @@
         app:enableLine="true"
         app:enableScale="true"
         app:enableSpan="true"
-        app:maxScale="100dp"
-        app:minScale="5dp"/>
+        app:minScale="1dp"
+        app:maxScale="10dp"/>
 
 </LinearLayout>

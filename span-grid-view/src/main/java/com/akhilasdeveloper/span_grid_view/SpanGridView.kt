@@ -46,17 +46,23 @@ class SpanGridView(
         init(null)
     }
 
-    companion object{
+    companion object {
         const val MODE_VIEW: Int = -2
         const val MODE_DRAW: Int = -3
     }
 
     //Determines the velocity in which the fling animation starts
     private val minDistanceMoved = 50
+
     //Fling friction
     private val flingFriction = 1.1f
 
     var minScale = 20f
+        set(value) {
+            field = value
+            resolution = value
+            setResolutionToScale(value)
+        }
     var maxScale = 150f
 
     private var touchCount = 0
@@ -225,6 +231,10 @@ class SpanGridView(
 
     private fun setScaleToResolution(scale: Float) {
         resolution = (maxScale - minScale) * scale
+    }
+
+    private fun setResolutionToScale(resolution: Float) {
+        scale = resolution / (maxScale - minScale)
     }
 
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
