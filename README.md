@@ -4,6 +4,7 @@ SpanGridView is an android view component which displays a grid and can plots po
 
 https://user-images.githubusercontent.com/73016717/211165779-3b39a033-ff36-442e-8c36-fc8f9fbbfbaf.mp4
 
+View is optimized using QuadTree data structure. 
 
 ## Installation
 
@@ -24,7 +25,7 @@ Step 2. Add the dependency
 
 ```groovy
 dependencies {
-	        implementation 'com.github.akhilasdeveloper:SpanGridView:1.2'
+	        implementation 'com.github.akhilasdeveloper:SpanGridView:1.3'
 	}
 ```
 
