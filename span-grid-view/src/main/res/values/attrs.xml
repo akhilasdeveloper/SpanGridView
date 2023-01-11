@@ -4,8 +4,8 @@
         <attr name="brushSize" format="integer" />
         <attr name="scale" format="float" />
         <attr name="lineWidth" format="dimension"/>
-        <attr name="minScale" format="dimension"/>
-        <attr name="maxScale" format="dimension"/>
+        <attr name="minResolution" format="dimension"/>
+        <attr name="maxResolution" format="dimension"/>
         <attr name="enableScale" format="boolean"/>
         <attr name="enableSpan" format="boolean"/>
         <attr name="enableLine" format="boolean"/>

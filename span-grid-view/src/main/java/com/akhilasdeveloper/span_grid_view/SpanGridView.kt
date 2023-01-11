@@ -5,6 +5,7 @@ import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
@@ -57,18 +58,23 @@ class SpanGridView(
     //Fling friction
     private val flingFriction = 1.1f
 
-    var minScale = 20f
+    var minResolution = 20f
         set(value) {
+            if (value > maxResolution)
+                maxResolution = value
             field = value
             setScaleToResolution(scale)
         }
-    var maxScale = 150f
+    var maxResolution = 150f
         set(value) {
+            if (value < minResolution)
+                minResolution = value
             field = value
             setScaleToResolution(scale)
         }
     private var touchCount = 0
-    private var fact = 0f
+    private val fact
+        get() = gridWidth / width
 
     private val paint = Paint().apply {
         isAntiAlias = true
@@ -102,7 +108,7 @@ class SpanGridView(
     var lineEnabled = true
         set(value) {
             field = value
-            this.setGridSize()
+            postInvalidate()
         }
     var mode: Int = MODE_DRAW
         set(value) {
@@ -116,11 +122,12 @@ class SpanGridView(
             field = data
         }
 
-    private var resolution: Float = minScale
+    private var resolution: Float = minResolution
         set(value) {
-            val data = value.coerceIn(minScale, maxScale)
+            val data = value.coerceIn(minResolution, maxResolution)
             field = data
-            this.setGridSize()
+            this.reDraw()
+            Log.d("scale", "scale: $scale")
         }
 
     var scale: Float = .5f
@@ -129,16 +136,16 @@ class SpanGridView(
             field = data
             setScaleToResolution(data)
         }
+        get() = getScaleFromResolution()
 
 
     var lineWidth: Float = 1f
         set(value) {
             field = value
             _lineWidth = value
-            this.setGridSize()
+            this.reDraw()
         }
 
-    private var _textSize: Float = 12f
     private var _lineWidth: Float = 1f
     private var _strokeWidth: Float = 5f
 
@@ -151,22 +158,19 @@ class SpanGridView(
         private set
 
     //Returns width of current grid
-    var gridWidth: Float = 0f
-        private set(value) {
-            field = value
-            fact = gridWidth / width
-        }
+    val gridWidth: Float
+        get() = ((width - _lineWidth) / (resolution + _lineWidth))
 
     //Returns height of current grid
-    var gridHeight: Float = 0f
-        private set
+    val gridHeight: Float
+        get() = ((height - _lineWidth) / (resolution + _lineWidth))
 
     private var xFlingValue: Float = 0f
         set(value) {
             field = value
             xOff = (value * fact)
 
-            setGridSize()
+            reDraw()
         }
 
     private var yFlingValue: Float = 0f
@@ -174,7 +178,7 @@ class SpanGridView(
             field = value
             yOff = (value * fact)
 
-            setGridSize()
+            reDraw()
         }
 
 
@@ -217,9 +221,9 @@ class SpanGridView(
                 ResourcesCompat.getColor(resources, R.color.grid_color, null)
             )
             scale = ta.getFloat(R.styleable.SpanGridView_scale, 1f)
-            lineWidth = ta.getDimension(R.styleable.SpanGridView_lineWidth, 1f).toPx()
-            minScale = ta.getDimension(R.styleable.SpanGridView_minScale, minScale).toPx()
-            maxScale = ta.getDimension(R.styleable.SpanGridView_maxScale, maxScale).toPx()
+            lineWidth = ta.getDimension(R.styleable.SpanGridView_lineWidth, 1f).dpToPx()
+            minResolution = ta.getDimension(R.styleable.SpanGridView_minResolution, minResolution).dpToPx()
+            maxResolution = ta.getDimension(R.styleable.SpanGridView_maxResolution, maxResolution).dpToPx()
             scaleEnabled = ta.getBoolean(R.styleable.SpanGridView_enableScale, true)
             spanEnabled = ta.getBoolean(R.styleable.SpanGridView_enableSpan, true)
             lineEnabled = ta.getBoolean(R.styleable.SpanGridView_enableLine, true)
@@ -231,12 +235,10 @@ class SpanGridView(
     }
 
     private fun setScaleToResolution(scale: Float) {
-        resolution = (maxScale - minScale) * scale
+        resolution = (maxResolution - minResolution) * scale
     }
 
-    private fun setResolutionToScale(resolution: Float) {
-        scale = resolution / (maxScale - minScale)
-    }
+    private fun getScaleFromResolution() = resolution / (maxResolution - minResolution)
 
     private val mGestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(
@@ -290,9 +292,8 @@ class SpanGridView(
             if (mode == MODE_VIEW && scaleEnabled) {
 
                 val scale = resolution * detector.scaleFactor
-                if (scale in minScale..maxScale) {
+                if (scale in minResolution..maxResolution) {
 
-                    _textSize *= detector.scaleFactor
                     _lineWidth *= detector.scaleFactor
                     _strokeWidth *= detector.scaleFactor
 
@@ -319,7 +320,7 @@ class SpanGridView(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        setGridSize()
+        reDraw()
     }
 
     /**
@@ -441,14 +442,10 @@ class SpanGridView(
         postInvalidate()
     }
 
-    private fun setGridSize() {
-        gridWidth = ((width - _lineWidth) / (resolution + _lineWidth))
-        gridHeight = ((height - _lineWidth) / (resolution + _lineWidth))
+    private fun maximumGridWidth() = (width - _lineWidth) / (minResolution + _lineWidth)
+    private fun maximumGridHeight() = (height - _lineWidth) / (minResolution + _lineWidth)
 
-        restore()
-    }
-
-    private fun restore() {
+    private fun reDraw() {
         val w = (gridWidth / 2) + 2
         val h = (gridHeight / 2) + 2
         val x = w - xOff - 1
@@ -560,8 +557,7 @@ class SpanGridView(
         fun onModeChange(mode: Int)
     }
 
-    fun Float.toDp(): Float = (this / Resources.getSystem().displayMetrics.density)
-    fun Float.toPx(): Float = (this * Resources.getSystem().displayMetrics.density)
+    private fun Float.dpToPx(): Float = (this * Resources.getSystem().displayMetrics.density)
 
 }
 
