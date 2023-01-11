@@ -19,10 +19,6 @@ class MainActivity : AppCompatActivity() {
 
         val spanGridView = binding.gridViewHolder
 
-        binding.line.setOnClickListener {
-            spanGridView.lineEnabled = !spanGridView.lineEnabled
-        }
-
         spanGridView.setGridSelectListener(eventListener = object :
             SpanGridView.OnGridSelectListener {
 
