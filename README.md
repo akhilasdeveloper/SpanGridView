@@ -25,7 +25,7 @@ Step 2. Add the dependency
 
 ```groovy
 dependencies {
-	        implementation 'com.github.akhilasdeveloper:SpanGridView:1.3'
+	        implementation 'com.github.akhilasdeveloper:SpanGridView:1.4'
 	}
 ```
 
@@ -40,14 +40,14 @@ Add it in the xml as below
         android:id="@+id/gridViewHolder"
         app:gridColor="#1B4913"
         app:lineColor="#DFDFDF"
-        app:lineWidth=".2dp"
-        app:scale="1"
+        app:lineWidth="1dp"
         app:brushSize="1"
+        app:scale="0.8"
         app:enableLine="true"
         app:enableScale="true"
         app:enableSpan="true"
-        app:minScale="1dp"
-        app:maxScale="10dp"/>
+        app:minResolution="10dp"
+        app:maxResolution="100dp"/>
 ```
 
 Attributes and functions
@@ -64,8 +64,8 @@ spanGridView.lineEnabled // enable/disable grid line [true, false]
 spanGridView.scaleEnabled // enable/disable grid zooming/scaling
 spanGridView.spanEnabled // enable/disable grid spanning
 spanGridView.lineWidth // set grid line width
-spanGridView.minScale // sets the minimum scale
-spanGridView.maxScale // sets the maximum scale
+spanGridView.minResolution // sets the minimum resolution
+spanGridView.maxResolution // sets the maximum resolution
 spanGridView.mode // get/set current mode [MODE_VIEW, MODE_DRAW]
 
 //MODE_VIEW: spanning, pinch zooming of the grid view is allowed. spanning can be performed using one finger. Drawing will be disabled. 
