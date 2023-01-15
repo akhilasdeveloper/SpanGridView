@@ -56,7 +56,7 @@ Attributes and functions
 
 spanGridView.gridHeight //Returns Grid height of current screen
 spanGridView.gridWidth //Returns Grid width of current screen
-spanGridView.brushSize // set/get brush size [1, 2, 3].
+spanGridView.brushSize // set/get brush size [1, 2, 3, 4, 5].
 spanGridView.drawEnabled // enable/disable drawing [true, false]
 spanGridView.gridColor // set/get grid background color
 spanGridView.lineColor // set/get grid line color
