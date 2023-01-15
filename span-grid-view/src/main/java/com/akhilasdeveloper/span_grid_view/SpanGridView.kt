@@ -477,6 +477,20 @@ class SpanGridView(
         }
     }
 
+    fun plotPoints(pxs: ArrayList<Point>, color: Int) {
+        var postInvalidate = false
+        pxs.forEach { px->
+            val pointNode = PointNode(x = px.x, y = px.y, fill = color)
+            historyQuad.insert(pointNode)
+            if (isPointInCurrentScreen(px)) {
+                addToPoints(pointNode)
+                postInvalidate = true
+            }
+        }
+        if (postInvalidate)
+            postInvalidate()
+    }
+
     private fun isPointInCurrentScreen(point: Point): Boolean {
 
         val w = (gridWidth / 2) + 2
@@ -496,6 +510,13 @@ class SpanGridView(
     fun clearPoint(px: Point) {
         historyQuad.remove(px)
         pointsOnScreen.remove(px)
+    }
+
+    fun clearPoints(pxs: ArrayList<Point>){
+        pxs.forEach {px->
+            historyQuad.remove(px)
+            pointsOnScreen.remove(px)
+        }
         postInvalidate()
     }
 
