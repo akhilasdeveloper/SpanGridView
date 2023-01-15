@@ -25,7 +25,7 @@ Step 2. Add the dependency
 
 ```groovy
 dependencies {
-	        implementation 'com.github.akhilasdeveloper:SpanGridView:1.5'
+	        implementation 'com.github.akhilasdeveloper:SpanGridView:1.6'
 	}
 ```
 
@@ -76,7 +76,9 @@ spanGridView.pointsOnScreen //Returns the list of coordinates of the drawn point
 spanGridView.scale // set/get scale [0.0f to 1.0f] of the grid.
 spanGridView.startPoint //Returns the coordinate of the top left point on the current screen
 spanGridView.plotPoint(Point(2,3), Color.RED) //Draws a point on the grid position (2,3) with color red.
+spanGridView.plotPoints(arrayListOf(Point(2,3), Point(4,5) .. etc), Color.RED) //Draws list of points on the grid with color red.
 spanGridView.clearPoint(Point(3,5)) //Clear the drawn point on the grid position (3,5)
+spanGridView.clearPoints(arrayListOf(Point(2,3), Point(4,5) .. etc)) //Clears list of drawn points from the grid
 spanGridView.clearData() //Clear all drawn points
 
 
