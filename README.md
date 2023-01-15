@@ -25,7 +25,7 @@ Step 2. Add the dependency
 
 ```groovy
 dependencies {
-	        implementation 'com.github.akhilasdeveloper:SpanGridView:1.4'
+	        implementation 'com.github.akhilasdeveloper:SpanGridView:1.5'
 	}
 ```
 
