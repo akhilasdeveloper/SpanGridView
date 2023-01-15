@@ -21,6 +21,9 @@ import com.akhilasdeveloper.span_grid_view.models.Point
 import com.akhilasdeveloper.span_grid_view.models.PointF
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.roundToInt
 
 
 class SpanGridView(
@@ -118,7 +121,7 @@ class SpanGridView(
 
     var brushSize = 1
         set(value) {
-            val data = value.coerceIn(1, 3)
+            val data = value.coerceIn(1, 5)
             field = data
         }
 
@@ -151,6 +154,9 @@ class SpanGridView(
 
     private var xOff = 0f
     private var yOff = 0f
+
+    private var lineStart: Point? = null
+    private var linePoints = mutableSetOf<Point>()
 
     //Returns the coordinates of top left point in the current screen
     var startPoint: Point = Point(0, 0)
@@ -222,8 +228,10 @@ class SpanGridView(
             )
             scale = ta.getFloat(R.styleable.SpanGridView_scale, 1f)
             lineWidth = ta.getDimension(R.styleable.SpanGridView_lineWidth, 1f).dpToPx()
-            minResolution = ta.getDimension(R.styleable.SpanGridView_minResolution, minResolution).dpToPx()
-            maxResolution = ta.getDimension(R.styleable.SpanGridView_maxResolution, maxResolution).dpToPx()
+            minResolution =
+                ta.getDimension(R.styleable.SpanGridView_minResolution, minResolution).dpToPx()
+            maxResolution =
+                ta.getDimension(R.styleable.SpanGridView_maxResolution, maxResolution).dpToPx()
             scaleEnabled = ta.getBoolean(R.styleable.SpanGridView_enableScale, true)
             spanEnabled = ta.getBoolean(R.styleable.SpanGridView_enableSpan, true)
             lineEnabled = ta.getBoolean(R.styleable.SpanGridView_enableLine, true)
@@ -339,7 +347,7 @@ class SpanGridView(
         val fact = resolution + _lineWidth
         val sx = (px.x / fact) - xOff
         val sy = (px.y / fact) - yOff
-        return Point(sx.toInt(), sy.toInt())
+        return Point(floor(sx).toInt(), floor(sy).toInt())
     }
 
     private fun determineViewMode() {
@@ -372,17 +380,24 @@ class SpanGridView(
             MotionEvent.ACTION_DOWN -> {
                 flingX.cancel()
                 flingY.cancel()
+                lineStart = null
+                linePoints.clear()
             }
             MotionEvent.ACTION_MOVE -> {
                 if (mode == MODE_DRAW) {
                     val px = getPixelDetails(pxF)
-                    drawCenterSquare(px.x, px.y, brushSize)
+                    lineStart?.let {
+                        drawLine(it.x, it.y, px.x, px.y)
+                    }
+                    lineStart = px
                 }
             }
             MotionEvent.ACTION_UP -> {
                 if (mode == MODE_DRAW) {
                     val px = getPixelDetails(pxF)
                     drawCenterSquare(px.x, px.y, brushSize)
+                    linePoints.clear()
+                    lineStart = null
                 }
 
                 setTouchCount(0)
@@ -399,8 +414,50 @@ class SpanGridView(
         val y2 = yc + rr
 
         for (x in x1..x2)
-            for (y in y1..y2)
-                mListener?.onDraw(Point(x, y))
+            for (y in y1..y2) {
+                val point = Point(x, y)
+                if (!linePoints.contains(point)){
+                    linePoints.add(point)
+                    mListener?.onDraw(Point(x, y))
+                }
+            }
+    }
+
+    private fun drawLine(x1: Int, y1: Int, x2: Int, y2: Int) {
+        var x = x1
+        var y = y1
+        val w = x2 - x
+        val h = y2 - y
+        var dx1 = 0
+        var dy1 = 0
+        var dx2 = 0
+        var dy2 = 0
+        if (w < 0) dx1 = -1 else if (w > 0) dx1 = 1
+        if (h < 0) dy1 = -1 else if (h > 0) dy1 = 1
+        if (w < 0) dx2 = -1 else if (w > 0) dx2 = 1
+        var longest = abs(w)
+        var shortest = abs(h)
+        if (longest <= shortest) {
+            longest = abs(h)
+            shortest = abs(w)
+            if (h < 0) dy2 = -1 else if (h > 0) dy2 = 1
+            dx2 = 0
+        }
+        var numerator = longest shr 1
+        for (i in 0..longest) {
+
+            drawCenterSquare(x, y, brushSize)
+
+            numerator += shortest
+            if (numerator >= longest) {
+                numerator -= longest
+                x += dx1
+                y += dy1
+            } else {
+                x += dx2
+                y += dy2
+            }
+        }
     }
 
     override fun performClick(): Boolean {
@@ -441,9 +498,6 @@ class SpanGridView(
         pointsOnScreen.remove(px)
         postInvalidate()
     }
-
-    private fun maximumGridWidth() = (width - _lineWidth) / (minResolution + _lineWidth)
-    private fun maximumGridHeight() = (height - _lineWidth) / (minResolution + _lineWidth)
 
     private fun reDraw() {
         val w = (gridWidth / 2) + 2
