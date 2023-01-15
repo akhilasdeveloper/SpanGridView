@@ -11,6 +11,7 @@ class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
+    private var isErase = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,10 +27,15 @@ class MainActivity : AppCompatActivity() {
              * px is the touched grid cell
              */
             override fun onDraw(px: Point) {
-                spanGridView.plotPoint(
-                    px,
-                    Color.RED
+                if (isErase)
+                spanGridView.clearPoint(
+                    px
                 ) // plots a point on position px with color red.
+                else
+                    spanGridView.plotPoint(
+                        px,
+                        Color.RED
+                    )
             }
 
             /**
@@ -40,6 +46,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-
+        binding.button.setOnClickListener {
+            isErase = !isErase
+        }
     }
 }

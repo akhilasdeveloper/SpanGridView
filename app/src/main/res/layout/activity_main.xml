@@ -21,4 +21,9 @@
         app:minResolution="1dp"
         app:maxResolution="100dp"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

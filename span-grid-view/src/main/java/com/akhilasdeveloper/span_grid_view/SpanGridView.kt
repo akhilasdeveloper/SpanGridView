@@ -510,6 +510,7 @@ class SpanGridView(
     fun clearPoint(px: Point) {
         historyQuad.remove(px)
         pointsOnScreen.remove(px)
+        postInvalidate()
     }
 
     fun clearPoints(pxs: ArrayList<Point>){
