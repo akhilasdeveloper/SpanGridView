@@ -10,10 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/gridViewHolder"
-        app:gridColor="#1B4913"
-        app:lineColor="#DFDFDF"
+        app:gridColor="#42A5F5"
+        app:lineColor="#0D47A1"
         app:lineWidth="1dp"
-        app:brushSize="5"
+        app:brushSize="1"
         app:scale="1"
         app:enableLine="true"
         app:enableScale="true"
@@ -24,6 +24,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/button"/>
+        android:id="@+id/button"
+        android:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

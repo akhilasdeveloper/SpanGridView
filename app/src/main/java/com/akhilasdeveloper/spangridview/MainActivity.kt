@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                 else
                     spanGridView.plotPoint(
                         px,
-                        Color.RED
+                        Color.argb(255,0,50,100)
                     )
             }
 
